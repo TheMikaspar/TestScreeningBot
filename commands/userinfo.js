@@ -19,15 +19,17 @@ module.exports = {
         const noblox_thumbnail = await noblox.getPlayerThumbnail(noblox_userid, 420 ,"png", true, "Bust");
         const noblox_info_obj = await noblox.getPlayerInfo(noblox_userid);
         const noblox_info = JSON.stringify(noblox_info_obj);
+        const imageFile = new AttachmentBuilder(noblox_thumbnail.imageUrl);
         const RobloxUserEmbed = new EmbedBuilder()
             .setTitle(username)
-            .setThumbnail(noblox_thumbnail.imageUrl)
+            .setThumbnail(imageFile)
             .setDescription(noblox_userid)
           ///  .addFields(
           ///    {name: "User information", value: noblox_info}
           ///  )
             .setTimestamp();
-      await interaction.reply({ embeds: [RobloxUserEmbed] });
+    ///  await interaction.reply({ embeds: [RobloxUserEmbed] });
+    await interaction.reply({content: "test", embed: [RobloxUserEmbed], file: [imageFile]});
       ///    await interaction.reply({content: noblox_info})
       }
 };
