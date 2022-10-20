@@ -3,8 +3,10 @@ const { token } = require('./config.json');
 const noblox = require('noblox.js');
 const fs = require('node:fs');
 const path = require('node:path');
+///const util = require('./util.js')
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+///util.init(this.client);
 
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
