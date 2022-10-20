@@ -1,6 +1,7 @@
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js')
+const { GuildId, clientId, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 
 ///Command creator section
 module.exports = {
@@ -79,7 +80,7 @@ module.exports = {
 const message = await interaction.reply({ embeds: [ NewScreeningEmbed ] , components: [row]});
 const filter = (i) => {
   if (interaction.used.id != i.user.id) {
-      i.reply({content: `Get balled lol https://cdn.discordapp.com/attachments/307592516184702977/1028000843527626883/unknown.png`, ephemeral: true});
+      i.reply({content: `Not for you.`, ephemeral: true});
         return false
   } else return true
 }

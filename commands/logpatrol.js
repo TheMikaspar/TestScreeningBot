@@ -2,6 +2,7 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js')
 const trello = require('../trello.js')
+const { GuildId, clientId, is_police_id, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 
 
 ///Command creator section
@@ -30,8 +31,9 @@ module.exports = {
     const minutes_patrolled = await minutes.toString();
 
     const roblox_userid = await noblox.getIdFromUsername(username);
-    const roblox_username = await JSON.stringify(noblox.getUsernameFromId(roblox_userid.toString.replace(/"/g, '')));
-
+    const roblox_username_orig = await noblox.getUsernameFromId(roblox_userid);
+    const roblox_username = await JSON.stringify(roblox_username_orig).replace(/"/g, '');
+    const is_police = interaction.member.roles.cache.has(is_police_id);
 
       // The user does not exist.
       if (!roblox_username) {
@@ -64,18 +66,13 @@ module.exports = {
 
       if (is_police) {
           existing_card = await trello.get_card_by_name(
-              process.env.TRELLO_LIST_ID_POLICE,
+                  TRELLO_LIST_ID_POLICE,
                   roblox_username,
-                  process.env.TRELLO_USER_KEY,
-                  process.env.TRELLO_USER_TOKEN
+                  TRELLO_USER_KEY,
+                  TRELLO_USER_TOKEN
           );
       } else {
-          existing_card = await trello.get_card_by_name(
-              process.env.TRELLO_LIST_ID_AMBULANCE,
-                  roblox_username,
-                  process.env.TRELLO_USER_KEY,
-                  process.env.TRELLO_USER_TOKEN
-          );
+          interaction.reply({content: "You need to be a member of the Police to use this command!"})
       }
 
       let response = null;
@@ -84,15 +81,15 @@ module.exports = {
           const description = `Hours patrolled: ${hours_patrolled}\nMinutes patrolled: ${minutes_patrolled}`;
 
           if (is_police) {
-              response = await trello.create_card(process.env.TRELLO_LIST_ID_POLICE, {
+              response = await trello.create_card(TRELLO_LIST_ID_POLICE, {
                   name: roblox_username,
                   desc: description
-              }, process.env.TRELLO_USER_KEY, process.env.TRELLO_USER_TOKEN);
+              }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
           } else {
-              response = await trello.create_card(process.env.TRELLO_LIST_ID_AMBULANCE, {
+              response = await trello.create_card(TRELLO_LIST_ID_AMBULANCE, {
                   name: roblox_username,
                   desc: description
-              }, process.env.TRELLO_USER_KEY, process.env.TRELLO_USER_TOKEN);
+              }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
           }
       } else {
           const old_description = existing_card.desc;
@@ -122,28 +119,17 @@ module.exports = {
 
           response = await trello.update_card(existing_card.id, {
               desc: description
-          }, process.env.TRELLO_USER_KEY, process.env.TRELLO_USER_TOKEN);
+          }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
       }
 
       if (response == null || (response.statusCode && response.statusCode == 429))
       {
-        const message = interaction.reply({content: "Error 429", ephemeral: true});
-          message.react("\u26A0"); // :warning:
-
-      const message = interaction.reply({content: "I'm sorry, but something went wrong processing your patrol log. Please try again later, because we might have exceeded a ratelimit. If it keeps occuring, please message BelethLucifer.", ephemeral: true});
+        interaction.reply({content: "Error 429", ephemeral: true});
       } else {
-          message.react("\u2705"); // :white_check_mark:
+interaction.reply({content: "I'm sorry, but something went wrong processing your patrol log. Please try again later, because we might have exceeded a ratelimit. If it keeps occuring, please message BelethLucifer.", ephemeral: true});
       }
-  }
 
-  exports.info = {
-      requires_hc: false,
-      channel_data: {
-          channel_locked: true,
-          channel_id_police: "557183158924214301",
-          channel_id_ambulance: "697071975822000169"
-      }
-  }
+
 
   console.log(username + " patrolled for " + hours_patrolled + " hours and " + minutes_patrolled + " minutes. ");
   await interaction.reply({})
