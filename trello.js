@@ -1,5 +1,6 @@
 const http = require("superagent");
 const util = require("./util.js");
+const { list_id, card_info, key, token } = require('./config.json')
 
 // Get the API Key at: https://trello.com/app-key
 // On that same page, there is also a link to get a token.

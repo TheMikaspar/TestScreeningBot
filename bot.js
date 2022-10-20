@@ -1,5 +1,5 @@
 const { Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-const { token } = require('./config.json');
+const { bot_token } = require('./config.json');
 const noblox = require('noblox.js');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -51,4 +51,4 @@ client.on('interactionCreate', async interaction => {
   console.log(interaction);
 });
 
-client.login(token);
+client.login(bot_token);

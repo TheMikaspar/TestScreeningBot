@@ -1,5 +1,5 @@
 const { REST, Routes } = require('discord.js');
-const { clientId, guildId, token } = require('./config.json');
+const { clientId, guildId, bot_token } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -13,7 +13,7 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: '10' }).setToken(token);
+const rest = new REST({ version: '10' }).setToken(bot_token);
 
 /// To delete commands
 ///rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })

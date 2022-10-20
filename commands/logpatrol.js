@@ -25,15 +25,17 @@ module.exports = {
 
   async execute(interaction) {
     const username = await interaction.options.getString('username');
-    const hours = await interaction.options.getNumber('hours');
-    const minutes = await interaction.options.getNumber('minutes');
-    const hours_patrolled = await hours.toString();
-    const minutes_patrolled = await minutes.toString();
+    const hours_patrolled = await interaction.options.getNumber('hours');
+    const minutes_patrolled = await interaction.options.getNumber('minutes');
+    const hours_patrolled_str = await hours_patrolled.toString();
+    const minutes_patrolled_str = await minutes_patrolled.toString();
 
     const roblox_userid = await noblox.getIdFromUsername(username);
     const roblox_username_orig = await noblox.getUsernameFromId(roblox_userid);
     const roblox_username = await JSON.stringify(roblox_username_orig).replace(/"/g, '');
     const is_police = interaction.member.roles.cache.has(is_police_id);
+    const roblox_userid_str = await roblox_userid.toString();
+    const noblox_thumbnail = await noblox.getPlayerThumbnail(roblox_userid_str, 420 ,"png", true, "Bust");
 
       // The user does not exist.
       if (!roblox_username) {
@@ -61,7 +63,7 @@ module.exports = {
 
           return;
       }
-
+/// Create trello card or edit it
       let existing_card;
 
       if (is_police) {
@@ -72,11 +74,11 @@ module.exports = {
                   TRELLO_USER_TOKEN
           );
       } else {
-          interaction.reply({content: "You need to be a member of the Police to use this command!"})
+          interaction.reply({content: "You need to be a member of the Police to use this command!", ephemeral: true})
       }
 
       let response = null;
-
+/// Create new card
       if (!existing_card) {
           const description = `Hours patrolled: ${hours_patrolled}\nMinutes patrolled: ${minutes_patrolled}`;
 
@@ -85,6 +87,15 @@ module.exports = {
                   name: roblox_username,
                   desc: description
               }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
+/// EMBEDS SECTION -- NEW CARD
+                const NewCardEmbed = new EmbedBuilder()
+                .setTitle("New patrol logged!")
+                .setThumbnail(noblox_thumbnail[0].imageUrl)
+                .setDescription(roblox_username)
+                .addFields({name: "Time logged", value: `${hours_patrolled} hours and ${minutes_patrolled} minutes.`})
+                .setTimestamp();
+
+                interaction.reply({embeds: [NewCardEmbed], ephemeral: true});
           } else {
               response = await trello.create_card(TRELLO_LIST_ID_AMBULANCE, {
                   name: roblox_username,
@@ -120,18 +131,21 @@ module.exports = {
           response = await trello.update_card(existing_card.id, {
               desc: description
           }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
+/// EMBEDS SECTION -- EXISTING CARD
+          const OldCardEmbed = new EmbedBuilder()
+            .setTitle("New patrol logged!")
+            .setThumbnail(noblox_thumbnail[0].imageUrl)
+            .setDescription(roblox_username)
+            .addFields({name: "Time logged", value: `${hours_patrolled} hours and ${minutes_patrolled} minutes.`})
+            .addFields({name: "Total time", value: `${new_hours_patrolled} hours and ${new_minutes_patrolled} minutes.`})
+            .setTimestamp();
+          interaction.reply({embeds: [OldCardEmbed], ephemeral: true });
       }
 
       if (response == null || (response.statusCode && response.statusCode == 429))
       {
-        interaction.reply({content: "Error 429", ephemeral: true});
-      } else {
-interaction.reply({content: "I'm sorry, but something went wrong processing your patrol log. Please try again later, because we might have exceeded a ratelimit. If it keeps occuring, please message BelethLucifer.", ephemeral: true});
-      }
+        interaction.reply({content: "Something seems to have gone wrong. Please contact BelethLucifer if the error keeps occurring, or if the bot fails to respond after this error.", ephemeral: true});
+      } 
+console.log(username + " patrolled for " + hours_patrolled_str + " hours and " + minutes_patrolled_str + " minutes. ");
 
-
-
-  console.log(username + " patrolled for " + hours_patrolled + " hours and " + minutes_patrolled + " minutes. ");
-  await interaction.reply({content: "You have added " + hours_patrolled + " hours and " + minutes_patrolled + " minutes to your patrol logs.", ephemeral: true})
-}
-};
+}};
