@@ -1,9 +1,9 @@
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const noblox = require('noblox.js')
-const trello = require('../trello.js')
+const noblox = require('noblox.js');
+const trello = require('../trello.js');
 const { GuildId, clientId, is_police_id, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
-
+const util = require('../util.js');
 
 ///Command creator section
 module.exports = {
@@ -132,6 +132,6 @@ interaction.reply({content: "I'm sorry, but something went wrong processing your
 
 
   console.log(username + " patrolled for " + hours_patrolled + " hours and " + minutes_patrolled + " minutes. ");
-  await interaction.reply({})
+  await interaction.reply({content: "You have added " + hours_patrolled + " hours and " + minutes_patrolled + " minutes to your patrol logs.", ephemeral: true})
 }
 };

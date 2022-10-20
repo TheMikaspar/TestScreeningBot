@@ -1,5 +1,6 @@
 const util = require("./util");
 const http = require("superagent");
+const { BELETH_USER_ID } = require('./config.json')
 
 let client = null;
 
@@ -13,7 +14,7 @@ exports.process_error = async (error) => {
 
     if (client) {
         // Notify Valatos about the error by also sending the error via a DM to him.
-        const valatos = await client.fetchUser(process.env.VALATOS_USER_ID);
+        const valatos = await client.fetchUser(BELETH_USER_ID);
 
         if (valatos) {
             valatos.send(`An error has occured!\n\n\`\`\`${error.stack}\`\`\``);
