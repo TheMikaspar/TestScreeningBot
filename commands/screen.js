@@ -1,7 +1,6 @@
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js')
-const { GuildId, clientId, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 
 ///Command creator section
 module.exports = {
@@ -23,6 +22,11 @@ module.exports = {
             const noblox_username = await noblox.getUsernameFromId(noblox_userid);
             const noblox_thumbnail = await noblox.getPlayerThumbnail(noblox_userid, 420 ,"png", true, "Bust");
             const noblox_info = await noblox.getPlayerInfo(noblox_userid);
+            const noblox_nld = await noblox.getRankNameInGroup(2525269, noblox_userid);
+            const noblox_ant = await noblox.getRankNameInGroup(5024778, noblox_userid);
+            const noblox_requester_idn = await noblox.getIdFromUsername(interaction.member.displayName);
+            const noblox_requester_id = await noblox_requester_idn.toString();
+            const noblox_requester_thumb = await noblox.getPlayerThumbnail(noblox_requester_id, 420, "png", true, "Bust");
 
 /// Button create section
             const row = new ActionRowBuilder()
@@ -48,11 +52,14 @@ module.exports = {
             .setThumbnail(noblox_thumbnail[0].imageUrl)
             .setDescription("ID:" + noblox_userid)
             .addFields({name: "Join date", value: JSON.stringify(noblox_info.joinDate)})
-            .addFields({name: "Account age", value: JSON.stringify(noblox_info.age)})
-            .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount)})
-            .addFields({name: "Banned", value: JSON.stringify(noblox_info.isBanned)})
+            .addFields({name: "Account age", value: JSON.stringify(noblox_info.age) + " days old", inline: true})
+            .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount), inline: true})
+            .addFields({name: "Roblox Banned", value: JSON.stringify(noblox_info.isBanned), inline: true})
+            .addFields({name: "NLD Group rank", value: noblox_nld })
+            .addFields({name: "ANT Group rank", value: noblox_ant})
             .addFields({name: "Screening Status", value: "Awaiting Screening"})
-            .setTimestamp();
+            .setTimestamp()
+            .setFooter({text: "Screening requested by " + interaction.member.displayName, iconURL: noblox_requester_thumb[0].imageUrl});
 
             const PassedScreeningEmbed = new EmbedBuilder()
             .setTitle(JSON.stringify(noblox_username).replace(/"/g, ''))
@@ -61,7 +68,7 @@ module.exports = {
             .addFields({name: "Join date", value: JSON.stringify(noblox_info.joinDate)})
             .addFields({name: "Account age", value: JSON.stringify(noblox_info.age)})
             .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount)})
-            .addFields({name: "Banned", value: JSON.stringify(noblox_info.isBanned)})
+            .addFields({name: "Roblox Banned", value: JSON.stringify(noblox_info.isBanned)})
             .addFields({name: "Screening Status", value: "Passed :white_check_mark:"})
             .setTimestamp();
 
@@ -72,15 +79,15 @@ module.exports = {
             .addFields({name: "Join date", value: JSON.stringify(noblox_info.joinDate)})
             .addFields({name: "Account age", value: JSON.stringify(noblox_info.age)})
             .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount)})
-            .addFields({name: "Banned", value: JSON.stringify(noblox_info.isBanned)})
+            .addFields({name: "Roblox Banned", value: JSON.stringify(noblox_info.isBanned)})
             .addFields({name: "Screening Status", value: "Failed :x:"})
             .setTimestamp();
 
 /// Button reply section
 const message = await interaction.reply({ embeds: [ NewScreeningEmbed ] , components: [row]});
 const filter = (i) => {
-  if (interaction.used.id != i.user.id) {
-      i.reply({content: `Not for you.`, ephemeral: true});
+  if (interaction.user.id !== i.user.id) {
+      i.reply({content: `This is not meant for you.`, ephemeral: true});
         return false
   } else return true
 }
