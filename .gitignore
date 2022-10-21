@@ -1,3 +1,5 @@
 config.json
 node_modules
 commands/bal.js
+commands/userinfo.js
+commands/ping.js

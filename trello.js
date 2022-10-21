@@ -78,3 +78,21 @@ exports.delete_card = async (card_id, key, token) => {
 
     return data;
 }
+
+exports.move_card = async (list_id, board_id, new_list_id, key, token) => {
+  const url = `${base_url}/lists/${list_id}/moveAllCards?key=${key}&token=${token}`;
+
+  let data = null;
+
+  await http
+      .post(url)
+      .send({
+        idList: new_list_id,
+        idBoard: board_id
+      })
+      .then(reponse => data = response.body)
+      .catch(error => util.process_error(error));
+
+  return data;
+
+}
