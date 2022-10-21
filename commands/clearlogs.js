@@ -15,7 +15,7 @@ async execute(interaction) {
     const cards = await trello.get_cards(list_id, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
 
     const is_police = interaction.member.roles.cache.has(is_police_id);
-    let police_hc = await interaction.guild.roles.cache.get(HC_ROLE_ID_POLICE);
+    let police_hc = await interaction.member.roles.cache.has(HC_ROLE_ID_POLICE);
     let response = null;
     let date_ob = new Date();
     let day = ("0" + date_ob.getDate()).slice(-2);
@@ -27,21 +27,24 @@ async execute(interaction) {
         const description = `Logs last cleared on ${day}-${month}-${year} at ${hours}:${minutes}. Contained the following items: ${JSON.stringify(cards)}`;
         const title = `Last log clear: ${day}-${month}-${year}`
 
-        if (is_police) {
+        if (police_hc) {
             response = await trello.create_card(TRELLO_LIST_ID_POLICE, {
                 name: title,
                 desc: description
             }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
-          }
+
           if (cards) {
                   for (let card of cards) {
                       trello.delete_card(card.id, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
                   }
-              }
+              } interaction.reply("All logs deleted");
+            } else {
+              interaction.reply({content: "You can't use this command! This is for the High Command only!", ephemeral: true});
+            }
 ///    if (cards) {
 ///            await trello.move_card(list_id, new_list_id, board_id, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
 ///        } return;
 
-    interaction.reply("All logs deleted");
+
   }
 };
