@@ -96,3 +96,33 @@ exports.move_card = async (list_id, board_id, new_list_id, key, token) => {
   return data;
 
 }
+exports.create_screening = async (list_id, card_info, key, token) => {
+    const url = `${base_url}/cards?key=${key}&token=${token}`;
+
+    let data = null;
+
+    await http
+        .post(url) // This request is a POST request on the url.
+        .send({ // Give the request a JSON body.
+            idList: list_id,
+            name: card_info.name,
+            desc: card_info.desc
+        })
+        .then(response => data = response.body)
+        .catch(error => util.process_error(error));
+
+    return data;
+}
+
+exports.delete_screening = async (card_id, key, token) => {
+    const url = `${base_url}/cards/${card_id}?key=${key}&token=${token}`;
+
+    let data = null;
+
+    await http
+        .delete(url)
+        .then(response => data = response.body)
+        .catch(error => util.process_error(error));
+
+    return data;
+}

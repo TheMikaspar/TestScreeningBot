@@ -145,7 +145,7 @@ module.exports = {
       if (response == null || (response.statusCode && response.statusCode == 429))
       {
         interaction.reply({content: "Something seems to have gone wrong. Please contact BelethLucifer if the error keeps occurring, or if the bot fails to respond after this error.", ephemeral: true});
-      } 
+      }
 console.log(username + " patrolled for " + hours_patrolled_str + " hours and " + minutes_patrolled_str + " minutes. ");
 
 }};
