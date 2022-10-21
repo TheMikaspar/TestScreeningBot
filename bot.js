@@ -48,7 +48,7 @@ client.on('interactionCreate', async interaction => {
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isButton()) return;
-  console.log(interaction);
+  console.log(`${interaction.user.tag} in #${interaction.channel.name} pressed a button."`);
 });
 
 client.login(bot_token);
