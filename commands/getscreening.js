@@ -12,6 +12,19 @@ module.exports = {
 
 /// Command send
           async execute(interaction) {
-            interaction.reply("test")
-  }
+
+            let police_hc = await interaction.member.roles.cache.has(HC_ROLE_ID_POLICE);
+
+            let all_cards;
+
+            if (police_hc) {
+                all_cards = await trello.get_cards(
+                        TRELLO_LIST_ID_SCREENING,
+                        TRELLO_USER_KEY,
+                        TRELLO_USER_TOKEN
+                );
+
+  } all_cards.forEach(data => JSON.parse(data))
+  console.log(data)
+}
 };
