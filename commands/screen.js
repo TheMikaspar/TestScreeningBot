@@ -1,7 +1,6 @@
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js')
-const client = require('../bot.js')
 const { guildId } = require('../config.json')
 
 
