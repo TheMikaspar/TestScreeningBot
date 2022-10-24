@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType, } = require('discord.js');
 const noblox = require('noblox.js');
 const trello = require('../trello.js');
-const { GuildId, clientId, is_police_id, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN, board_id, new_list_id, list_id } = require('../config.json');
+const { GuildId, clientId, is_police_id, HC_ROLE_ID_POLICE, TRELLO_BOARD_ID, TRELLO_LIST_ID_OLD, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN, board_id, new_list_id, list_id } = require('../config.json');
 const util = require('../util.js');
 
 module.exports = {
@@ -33,11 +33,8 @@ async execute(interaction) {
                 desc: description
             }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
 
-          if (cards) {
-                  for (let card of cards) {
-                      trello.delete_card(card.id, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
-                  }
-              } interaction.reply("All logs deleted");
+        trello.move_card(TRELLO_LIST_ID_POLICE, TRELLO_BOARD_ID, TRELLO_LIST_ID_OLD, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
+                   interaction.reply("All logs moved to archive.");
             } else {
               interaction.reply({content: "You can't use this command! This is for the High Command only!", ephemeral: true});
             }

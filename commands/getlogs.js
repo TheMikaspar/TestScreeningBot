@@ -8,82 +8,58 @@ const trello = require('../trello.js')
 module.exports = {
   data: new SlashCommandBuilder()
         .setName('getlogs')
-        .setDescription('Pulls all patrol logs from Trello and checks if minimums have been reached.')
-        .addNumberOption(option =>
-          option.setName('minimum_hours')
-          .setDescription('Minimum hours required since last check')
+        .setDescription('Retrieve logged patrols for a specific user.')
+        .addStringOption(option =>
+          option.setName('username')
+          .setDescription('ROBLOX username.')
           .setRequired(true)),
 
 /// Command send
-          async execute(interaction) {
+async execute(interaction) {
 
-            let minimums = await interaction.options.getNumber('minimum_hours');
-            let police_hc = await interaction.member.roles.cache.has(HC_ROLE_ID_POLICE);
+    let is_police = await interaction.member.roles.cache.has(is_police_id);
+    const opt_username = await interaction.options.getString('username');
+    const noblox_userid_num = await noblox.getIdFromUsername(opt_username);
+    const noblox_userid = await noblox_userid_num.toString();
+    const noblox_username = await noblox.getUsernameFromId(noblox_userid);
+    const username = JSON.stringify(noblox_username).replace(/"/g, '')
+    const noblox_thumbnail = await noblox.getPlayerThumbnail(noblox_userid, 420 ,"png", true, "Bust");
+    const noblox_knp = await noblox.getRankNameInGroup(knp_group, noblox_userid);
+    let user_card;
 
-            let all_cards;
+    if (is_police) {
+        user_card = await trello.get_card_by_name(
+                TRELLO_LIST_ID_POLICE,
+                username,
+                TRELLO_USER_KEY,
+                TRELLO_USER_TOKEN
+        );
+        if(!user_card.desc){
+            interaction.reply("This user cannot be found! Make sure the spelling is correct!");
+        } else {
+        const data = user_card.desc;
+        const name = user_card.name;
 
-            if (police_hc) {
-                all_cards = await trello.get_cards(
-                        TRELLO_LIST_ID_POLICE,
-                        TRELLO_USER_KEY,
-                        TRELLO_USER_TOKEN
-                );
-  const rolesetIds = [22363330, 22363329, 22363327, 22363321, 22363313]
-  const all_members_array = noblox.getPlayers(knp_group, rolesetIds);
-  console.log(all_members_array);
-  console.log(minimums);
-  console.log(minimums - 1);
-/// Get data from cards
-   for (const card of all_cards) {
-    const data = card.desc;
-    const name = card.name;
-    const logged_hours = parseInt(data.split("Hours patrolled: ")[1]
-                                      .split("\n"));
+        const logged_hours = parseInt(data.split("Hours patrolled: ")[1].split("\n"));
 
-    const logged_minutes = parseInt(data.split("Minutes patrolled: ")[1]
-                                        .split("\n"));
+        const logged_minutes = parseInt(data.split("Minutes patrolled: ")[1].split("\n"));
 
+      
     if (Number.isNaN(logged_hours) || Number.isNaN(logged_minutes)) {
       return;
     }
-/// Check if hours > minimums
 
-if (logged_hours >= minimums) {
+      const LogEmbed = new EmbedBuilder()
+      .setTitle(name)
+      .setThumbnail(noblox_thumbnail[0].imageUrl)
+      .setDescription("Log check")
+      .addFields({name: "Rank: ", value: noblox_knp})
+      .addFields({name: "Hours patrolled: ", value: logged_hours.toString(), inline: true })
+      .addFields({name: "Minutes patrolled: ", value: logged_minutes.toString(), inline: true})
+      .setTimestamp();
 
-  const LogEmbed = new EmbedBuilder()
-  .setTitle(name)
-  .setDescription("Log check")
-  .addFields({name: "Hours patrolled: ", value: logged_hours.toString(), inline: true })
-  .addFields({name: "Minutes patrolled: ", value: logged_minutes.toString(), inline: true})
-  .addFields({name: "Meets requirements: ", value: "Yes :white_check_mark:"})
-  .setTimestamp();
-
-const message = await interaction.channel.send({ embeds: [ LogEmbed ]});
-
-} else if (logged_hours == minimums - 1 && logged_minutes >= 30) {
-  const LogEmbed = new EmbedBuilder()
-  .setTitle(name)
-  .setDescription("Log check")
-  .addFields({name: "Hours patrolled: ", value: logged_hours.toString(), inline: true })
-  .addFields({name: "Minutes patrolled: ", value: logged_minutes.toString(), inline: true})
-  .addFields({name: "Meets requirements: ", value: "Yes :white_check_mark:"})
-  .setTimestamp();
-  const message = await interaction.channel.send({ embeds: [ LogEmbed ]});
-} else if (logged_hours < minimums) {
-    const LogEmbed = new EmbedBuilder()
-    .setTitle(name)
-    .setDescription("Log check")
-    .addFields({name: "Hours patrolled: ", value: logged_hours.toString(), inline: true })
-    .addFields({name: "Minutes patrolled: ", value: logged_minutes.toString(), inline: true})
-    .addFields({name: "Meets requirements: ", value: "No :x: "})
-    .setTimestamp();
-    const message = await interaction.channel.send({ embeds: [ LogEmbed ]});
-    const m = interaction.guild.members.cache.find(member => member.nickname == name);
-    if(m) {
-      interaction.client.users.fetch(m).then(m => m.send("You did not reach the minimum patrol hours this month. If this has occurred more often, the High Command will be in contact. Please keep in mind that any leave of absence has not been taken into consideration. ").catch(() => {}))};
-      interaction.user.send(name + " did not reach the minimum patrol time this month.")
-}
-      }
+interaction.reply({embeds: [ LogEmbed ], ephemeral: true });
+        }
     }
-  }
+}
 };

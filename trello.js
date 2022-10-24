@@ -90,7 +90,7 @@ exports.move_card = async (list_id, board_id, new_list_id, key, token) => {
         idList: new_list_id,
         idBoard: board_id
       })
-      .then(reponse => data = response.body)
+      .then(response => data = response.body)
       .catch(error => util.process_error(error));
 
   return data;
