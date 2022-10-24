@@ -1,8 +1,9 @@
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const noblox = require('noblox.js')
+const noblox = require('noblox.js');
 const { GuildId, clientId, is_police_id, knp_group, IS_AIVD, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
-const trello = require('../trello.js')
+const trello = require('../trello.js');
+const util = require('../util.js');
 
 ///Command creator section
 module.exports = {
@@ -27,6 +28,15 @@ async execute(interaction) {
     const noblox_knp = await noblox.getRankNameInGroup(knp_group, noblox_userid);
     let user_card;
 
+    const roblox_username = await util.get_username_if_exists(opt_username);
+
+    if (!roblox_username) {
+        interaction.reply({content: "That user does not exist! Are you sure you have entered the right name?", ephemeral: true});
+
+        return;
+    }
+
+
     if (is_police) {
         user_card = await trello.get_card_by_name(
                 TRELLO_LIST_ID_POLICE,
@@ -34,9 +44,7 @@ async execute(interaction) {
                 TRELLO_USER_KEY,
                 TRELLO_USER_TOKEN
         );
-        if(!user_card.desc){
-            interaction.reply("This user cannot be found! Make sure the spelling is correct!");
-        } else {
+
         const data = user_card.desc;
         const name = user_card.name;
 
@@ -50,7 +58,7 @@ async execute(interaction) {
     }
 
       const LogEmbed = new EmbedBuilder()
-      .setTitle(name)
+      .setTitle(roblox_username)
       .setThumbnail(noblox_thumbnail[0].imageUrl)
       .setDescription("Log check")
       .addFields({name: "Rank: ", value: noblox_knp})
@@ -61,5 +69,4 @@ async execute(interaction) {
 interaction.reply({embeds: [ LogEmbed ], ephemeral: true });
         }
     }
-}
 };
