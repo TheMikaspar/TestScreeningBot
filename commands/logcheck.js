@@ -84,6 +84,8 @@ const message = await interaction.channel.send({ embeds: [ LogEmbed ]});
       interaction.user.send(name + " did not reach the minimum patrol time this month.")
 }
       } 
+      } else {
+        interaction.reply("Only the High Command may view all logs. If you believe this is an error, please contact BelethLucifer.");
       }
     }
   };

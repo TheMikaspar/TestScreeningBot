@@ -25,24 +25,26 @@ module.exports = {
 
   async execute(interaction) {
     const username = await interaction.options.getString('username');
-    const hours_patrolled = await interaction.options.getNumber('hours');
-    const minutes_patrolled = await interaction.options.getNumber('minutes');
-    const hours_patrolled_str = await hours_patrolled.toString();
-    const minutes_patrolled_str = await minutes_patrolled.toString();
-
-    const roblox_userid = await noblox.getIdFromUsername(username);
-    const roblox_username_orig = await noblox.getUsernameFromId(roblox_userid);
-    const roblox_username = await JSON.stringify(roblox_username_orig).replace(/"/g, '');
-    const is_police = interaction.member.roles.cache.has(is_police_id);
-    const roblox_userid_str = await roblox_userid.toString();
-    const noblox_thumbnail = await noblox.getPlayerThumbnail(roblox_userid_str, 420 ,"png", true, "Bust");
-
+    const roblox_username = await util.get_username_if_exists(username);
+    
+console.log(roblox_username);
       // The user does not exist.
       if (!roblox_username) {
           interaction.reply({content: "That user does not exist! Are you sure you have entered the right name?", ephemeral: true });
 
           return;
       }
+
+      const hours_patrolled = await interaction.options.getNumber('hours');
+      const minutes_patrolled = await interaction.options.getNumber('minutes');
+      const hours_patrolled_str = await hours_patrolled.toString();
+      const minutes_patrolled_str = await minutes_patrolled.toString();
+      const noblox_userid = await noblox.getIdFromUsername(username);
+      const noblox_username_orig = await noblox.getUsernameFromId(noblox_userid);
+      const noblox_username = JSON.stringify(noblox_username_orig).replace(/"/g, '');
+      const is_police = interaction.member.roles.cache.has(is_police_id);
+      const roblox_userid_str = await roblox_userid.toString();
+      const noblox_thumbnail = await noblox.getPlayerThumbnail(roblox_userid_str, 420 ,"png", true, "Bust");
 
       // These three variables are here just to improve readability.
 
@@ -69,7 +71,7 @@ module.exports = {
       if (is_police) {
           existing_card = await trello.get_card_by_name(
                   TRELLO_LIST_ID_POLICE,
-                  roblox_username,
+                  noblox_username,
                   TRELLO_USER_KEY,
                   TRELLO_USER_TOKEN
           );
@@ -84,24 +86,19 @@ module.exports = {
 
           if (is_police) {
               response = await trello.create_card(TRELLO_LIST_ID_POLICE, {
-                  name: roblox_username,
+                  name: noblox_username,
                   desc: description
               }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
 /// EMBEDS SECTION -- NEW CARD
                 const NewCardEmbed = new EmbedBuilder()
                 .setTitle("New patrol logged!")
                 .setThumbnail(noblox_thumbnail[0].imageUrl)
-                .setDescription(roblox_username)
+                .setDescription(noblox_username)
                 .addFields({name: "Time logged", value: `${hours_patrolled} hours and ${minutes_patrolled} minutes.`})
                 .setTimestamp();
 
                 interaction.reply({embeds: [NewCardEmbed], ephemeral: true});
-          } else {
-              response = await trello.create_card(TRELLO_LIST_ID_AMBULANCE, {
-                  name: roblox_username,
-                  desc: description
-              }, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
-          }
+          } 
       } else {
           const old_description = existing_card.desc;
 
@@ -135,7 +132,7 @@ module.exports = {
           const OldCardEmbed = new EmbedBuilder()
             .setTitle("New patrol logged!")
             .setThumbnail(noblox_thumbnail[0].imageUrl)
-            .setDescription(roblox_username)
+            .setDescription(noblox_username)
             .addFields({name: "Time logged", value: `${hours_patrolled} hours and ${minutes_patrolled} minutes.`})
             .addFields({name: "Total time", value: `${new_hours_patrolled} hours and ${new_minutes_patrolled} minutes.`})
             .setTimestamp();

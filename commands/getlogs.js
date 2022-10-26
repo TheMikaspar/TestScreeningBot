@@ -67,6 +67,8 @@ async execute(interaction) {
       .setTimestamp();
 
 interaction.reply({embeds: [ LogEmbed ], ephemeral: true });
+        } else {
+          interaction.reply("According to your roles, you are not a member of the Police. Please use your own log system or ensure you have the correct roles to run this command.");
         }
     }
 };

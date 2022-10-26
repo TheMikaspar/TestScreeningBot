@@ -1,7 +1,7 @@
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js')
-const { GuildId, clientId, is_police_id, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
+const { GuildId, clientId, is_police_id, academy_id, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 const trello = require('../trello.js')
 
 ///Command creator section
@@ -30,12 +30,13 @@ module.exports = {
             const noblox_requester_id = await noblox_requester_idn.toString();
             const noblox_requester_thumb = await noblox.getPlayerThumbnail(noblox_requester_id, 420, "png", true, "Bust");
             const is_police = interaction.member.roles.cache.has(is_police_id);
+            const is_academy = interaction.member.roles.cache.has(academy_id)
             const roblox_username = await JSON.stringify(noblox_username).replace(/"/g, '');
 
     /// Create new card
             let response = null;
 
-            if (is_police) {
+            if (is_police || is_academy) {
                 const description_obj = {
                   "username": username,
                   "noblox_userid_num": noblox_userid_num,
@@ -51,7 +52,7 @@ module.exports = {
                 };
                 const description = JSON.stringify(description_obj);
 
-                if (is_police) {
+                if (is_police || is_academy) {
                     response = await trello.create_card(TRELLO_LIST_ID_SCREENING, {
                         name: roblox_username,
                         desc: description
@@ -72,6 +73,8 @@ module.exports = {
       .setFooter({text: "Screening requested by " + interaction.member.displayName, iconURL: noblox_requester_thumb[0].imageUrl});
       /// REPLY SECTION
       interaction.reply({content: "New screening requested!", embeds: [NewScreeningEmbed], ephemeral: true});
+    } else {
+      interaction.reply("This command is only for Academy staff and the High Command. If you believe this is an error, please contact BelethLucifer.");
     }
   }
 }

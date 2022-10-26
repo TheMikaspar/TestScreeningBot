@@ -118,6 +118,8 @@ i.update({content: 'Screening denied!', embeds: [FailedScreeningEmbed], componen
           }
         })
       }
+    } else {
+      interaction.reply("This command is only for our screening team. If you believe this is an error, please contact BelethLucifer.");
     }
   }
 };
