@@ -1,3 +1,6 @@
+// Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
+// Last update: 28/10/2022 Command works fine, ready for deployment!
+
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js');
