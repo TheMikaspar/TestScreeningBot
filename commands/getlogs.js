@@ -1,3 +1,6 @@
+// Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
+// Last update: 28/10/2022 Command works fine, ready for deployment!
+
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js');
@@ -17,27 +20,35 @@ module.exports = {
 
 /// Command send
 async execute(interaction) {
-
+  const opt_username = await interaction.options.getString('username');
+  const roblox_username = await util.get_username_if_exists(opt_username);
+  
+  if(roblox_username) {
     let is_police = await interaction.member.roles.cache.has(is_police_id);
-    const opt_username = await interaction.options.getString('username');
     const noblox_userid_num = await noblox.getIdFromUsername(opt_username);
     const noblox_userid = await noblox_userid_num.toString();
     const noblox_username = await noblox.getUsernameFromId(noblox_userid);
-    const username = JSON.stringify(noblox_username).replace(/"/g, '')
     const noblox_thumbnail = await noblox.getPlayerThumbnail(noblox_userid, 420 ,"png", true, "Bust");
     const noblox_knp = await noblox.getRankNameInGroup(knp_group, noblox_userid);
-    let user_card;
-
-    const roblox_username = await util.get_username_if_exists(opt_username);
-
-    if (!roblox_username) {
-        interaction.reply({content: "That user does not exist! Are you sure you have entered the right name?", ephemeral: true});
-
-        return;
-    }
-
-
+    
     if (is_police) {
+      all_cards = await trello.get_cards(
+              TRELLO_LIST_ID_POLICE,
+              TRELLO_USER_KEY,
+              TRELLO_USER_TOKEN
+      );
+
+    
+
+    const rolesetIds = [22363330, 22363329, 22363327, 22363321, 22363313];
+    const all_members = await noblox.getPlayers(knp_group, rolesetIds);
+    
+    for (const user of all_members) {
+        const username = user.username;
+    
+        if (all_cards.includes(username)) {
+       
+    
         user_card = await trello.get_card_by_name(
                 TRELLO_LIST_ID_POLICE,
                 username,
@@ -65,10 +76,20 @@ async execute(interaction) {
       .addFields({name: "Hours patrolled: ", value: logged_hours.toString(), inline: true })
       .addFields({name: "Minutes patrolled: ", value: logged_minutes.toString(), inline: true})
       .setTimestamp();
-
-interaction.reply({embeds: [ LogEmbed ], ephemeral: true });
+          
+        interaction.reply({embeds: [ LogEmbed ], ephemeral: true });
         } else {
-          interaction.reply("According to your roles, you are not a member of the Police. Please use your own log system or ensure you have the correct roles to run this command.");
+          interaction.reply({content: "This user cannot be found in the logs! Make sure you spelled the name correctly!", ephemeral: true});
+          return;
         }
+      }
+    } else {
+      interaction.reply({content: "According to your roles, you are not a member of the Police. Please use your own log system or ensure you have the correct roles to run this command.", ephemeral: true});
+    return;
     }
+  } else {
+    interaction.reply({content: "This user doesn't exist! Make sure you spelled the name correctly!", ephemeral: true});
+        return;
+  }
+}
 };

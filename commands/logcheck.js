@@ -32,6 +32,31 @@ module.exports = {
   const rolesetIds = [22363330, 22363329, 22363327, 22363321, 22363313];
   const all_members = await noblox.getPlayers(knp_group, rolesetIds);
 
+  let logMessage = "";
+  let counter = 0;
+  
+  for (const user of all_members) {
+      const username = user.username;
+  
+      if (!all_cards.includes(username)) {
+          counter++;
+  
+          // Every 10th message
+          if (counter % 10 == 0) {
+              interaction.user.send(logMessage);
+              logMessage = "";
+          } else {
+              logMessage += "**" + username + "** **did not log any patrols since the last check.**\n";
+          }
+      }
+  }
+  
+  // there is still a message inside the buffer that wasn't sent yet.
+  // This could because the amount of people not logging is not divisible by 10. i.e: 5 people logging
+  // Send the message anyway.
+  if (logMessage.length > 0) {
+      interaction.user.send(logMessage);
+  };
 /// Get data from cards
    for (const card of all_cards) {
     const data = card.desc;
@@ -80,12 +105,12 @@ const message = await interaction.channel.send({ embeds: [ LogEmbed ]});
     const message = await interaction.channel.send({ embeds: [ LogEmbed ]});
     const m = interaction.guild.members.cache.find(member => member.nickname == name);
     if(m) {
-      interaction.client.users.fetch(m).then(m => m.send("You did not reach the minimum patrol hours this month. If this has occurred more often, the High Command will be in contact. Please keep in mind that any leave of absence has not been taken into consideration. ").catch(() => {}))};
-      interaction.user.send(name + " did not reach the minimum patrol time this month.")
-}
-      } 
+      interaction.client.users.fetch(m).then(m => m.send("You did not reach the minimum patrol hours required. If this has occurred more often, the High Command will be in contact. Please keep in mind that any leave of absence has not been taken into consideration. ").catch(() => {}))};
+      interaction.user.send("**" + name + "** did not reach the *minimum patrol* time since the last check.")
+            }
+        } 
       } else {
-        interaction.reply("Only the High Command may view all logs. If you believe this is an error, please contact BelethLucifer.");
-      }
-    }
-  };
+        interaction.reply({content: "Only the High Command may view all logs. If you believe this is an error, please contact BelethLucifer.", ephemeral: true});
+    } 
+  }
+};

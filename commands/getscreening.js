@@ -1,3 +1,6 @@
+// Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
+// Last update: 28/10/2022 Command works fine, CHANGE THE USER ID FOR OFFICIAL DEPLOYMENT
+
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const noblox = require('noblox.js')
@@ -77,9 +80,11 @@ module.exports = {
     .setThumbnail(noblox_thumbnail[0].imageUrl)
     .setDescription("ID:" + noblox_userid)
     .addFields({name: "Join date", value: JSON.stringify(noblox_info.joinDate)})
-    .addFields({name: "Account age", value: JSON.stringify(noblox_info.age)})
-    .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount)})
-    .addFields({name: "Roblox Banned", value: JSON.stringify(noblox_info.isBanned)})
+    .addFields({name: "Account age", value: JSON.stringify(noblox_info.age) + " days old", inline: true})
+    .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount), inline: true})
+    .addFields({name: "Roblox Banned", value: JSON.stringify(noblox_info.isBanned), inline: true})
+    .addFields({name: "NLD Group rank", value: noblox_nld })
+    .addFields({name: "ANT Group rank", value: noblox_ant})
     .addFields({name: "Screening Status", value: "Passed :white_check_mark:"})
     .setTimestamp();
 
@@ -88,9 +93,11 @@ module.exports = {
     .setThumbnail(noblox_thumbnail[0].imageUrl)
     .setDescription("ID:" + noblox_userid)
     .addFields({name: "Join date", value: JSON.stringify(noblox_info.joinDate)})
-    .addFields({name: "Account age", value: JSON.stringify(noblox_info.age)})
-    .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount)})
-    .addFields({name: "Roblox Banned", value: JSON.stringify(noblox_info.isBanned)})
+    .addFields({name: "Account age", value: JSON.stringify(noblox_info.age) + " days old", inline: true})
+    .addFields({name: "Friend count", value: JSON.stringify(noblox_info.friendCount), inline: true})
+    .addFields({name: "Roblox Banned", value: JSON.stringify(noblox_info.isBanned), inline: true})
+    .addFields({name: "NLD Group rank", value: noblox_nld })
+    .addFields({name: "ANT Group rank", value: noblox_ant})
     .addFields({name: "Screening Status", value: "Failed :x:"})
     .setTimestamp();
 
@@ -110,16 +117,19 @@ i.update({content: 'Screening accepted!', embeds: [PassedScreeningEmbed], compon
 const m = interaction.guild.members.cache.find(member => member.nickname == username);
 if(m) {
   interaction.client.users.fetch(m).then(m => m.send("Congratulations! You passed your screening and may now start requesting trainings. Good luck!").catch(() => {}))};
+  return;
 } if (i.customId === 'danger' && i.user.id === '243030109492215809') {
   const m = interaction.guild.members.cache.find(member => member.nickname == username);
   if(m) {
     interaction.client.users.fetch(m).then(m => m.send("Dear " + noblox_username + ", You have failed your screening. Please contact BelethLucifer for more information.").catch(() => {}))};
 i.update({content: 'Screening denied!', embeds: [FailedScreeningEmbed], components: [] });
+return;
           }
         })
       }
     } else {
-      interaction.reply("This command is only for our screening team. If you believe this is an error, please contact BelethLucifer.");
+      interaction.reply({content: "This command is only for our screening team. If you believe this is an error, please contact BelethLucifer.", ephemeral: true});
+      return;
     }
   }
 };

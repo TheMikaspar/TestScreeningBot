@@ -1,8 +1,11 @@
+// Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
+// Last update: 28/10/2022 Command works fine, could use something to catch rate limit errors.
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const noblox = require('noblox.js')
+const noblox = require('noblox.js');
 const { GuildId, clientId, is_police_id, academy_id, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
-const trello = require('../trello.js')
+const trello = require('../trello.js');
+const util = require('../util.js');
 
 ///Command creator section
 module.exports = {
@@ -32,8 +35,10 @@ module.exports = {
             const is_police = interaction.member.roles.cache.has(is_police_id);
             const is_academy = interaction.member.roles.cache.has(academy_id)
             const roblox_username = await JSON.stringify(noblox_username).replace(/"/g, '');
+            const username_exists = await util.get_username_if_exists(username);
 
     /// Create new card
+    if(username_exists) {
             let response = null;
 
             if (is_police || is_academy) {
@@ -75,7 +80,12 @@ module.exports = {
       interaction.reply({content: "New screening requested!", embeds: [NewScreeningEmbed], ephemeral: true});
     } else {
       interaction.reply("This command is only for Academy staff and the High Command. If you believe this is an error, please contact BelethLucifer.");
+      return;
     }
   }
+} else {
+  interaction.reply("This user doesn't exist! Make sure you spelled the name correctly!");
+  return;
+}
 }
 };

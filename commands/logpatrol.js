@@ -27,13 +27,8 @@ module.exports = {
     const username = await interaction.options.getString('username');
     const roblox_username = await util.get_username_if_exists(username);
     
-console.log(roblox_username);
       // The user does not exist.
-      if (!roblox_username) {
-          interaction.reply({content: "That user does not exist! Are you sure you have entered the right name?", ephemeral: true });
-
-          return;
-      }
+      if (roblox_username) {
 
       const hours_patrolled = await interaction.options.getNumber('hours');
       const minutes_patrolled = await interaction.options.getNumber('minutes');
@@ -43,7 +38,7 @@ console.log(roblox_username);
       const noblox_username_orig = await noblox.getUsernameFromId(noblox_userid);
       const noblox_username = JSON.stringify(noblox_username_orig).replace(/"/g, '');
       const is_police = interaction.member.roles.cache.has(is_police_id);
-      const roblox_userid_str = await roblox_userid.toString();
+      const roblox_userid_str = await noblox_userid.toString();
       const noblox_thumbnail = await noblox.getPlayerThumbnail(roblox_userid_str, 420 ,"png", true, "Bust");
 
       // These three variables are here just to improve readability.
@@ -60,8 +55,8 @@ console.log(roblox_username);
           return;
       }
 
-      if (hours_patrolled < 0) {
-          interaction.reply({content: "I'm sorry, but hours cannot go below zero!", ephemeral: true});
+      if (hours_patrolled < 0 || hours_patrolled > 24) {
+          interaction.reply({content: "I'm sorry, but hours cannot go below zero or above 24! If you managed to patrol *that* much, reconsider your choices.", ephemeral: true});
 
           return;
       }
@@ -76,7 +71,8 @@ console.log(roblox_username);
                   TRELLO_USER_TOKEN
           );
       } else {
-          interaction.reply({content: "You need to be a member of the Police to use this command!", ephemeral: true})
+          interaction.reply({content: "You need to be a member of the Police to use this command!", ephemeral: true});
+          return;
       }
 
       let response = null;
@@ -144,5 +140,8 @@ console.log(roblox_username);
         interaction.reply({content: "Something seems to have gone wrong. Please contact BelethLucifer if the error keeps occurring, or if the bot fails to respond after this error.", ephemeral: true});
       }
 console.log(username + " patrolled for " + hours_patrolled_str + " hours and " + minutes_patrolled_str + " minutes. ");
-
-}};
+    } else {
+        interaction.reply("This user doesn't exist! Make sure you spelled the name correctly!");
+    }
+}
+};
