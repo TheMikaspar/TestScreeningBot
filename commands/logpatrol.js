@@ -43,6 +43,12 @@ module.exports = {
       const is_police = interaction.member.roles.cache.has(is_police_id);
       const roblox_userid_str = await noblox_userid.toString();
       const noblox_thumbnail = await noblox.getPlayerThumbnail(roblox_userid_str, 420 ,"png", true, "Bust");
+      let date_ob = new Date();
+      let day = ("0" + date_ob.getDate()).slice(-2);
+      let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+      let year = date_ob.getFullYear();
+      let hours = date_ob.getHours();
+      let minutes = date_ob.getMinutes();
 
       // These three variables are here just to improve readability.
 

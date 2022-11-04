@@ -2,7 +2,7 @@
 // Last update: 28/10/2022 Command works fine, could use something to catch rate limit errors.
 
 /// Pre-command requirements
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 const noblox = require('noblox.js');
 const { GuildId, clientId, is_police_id, academy_id, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 const trello = require('../trello.js');
@@ -78,7 +78,7 @@ module.exports = {
       .setTimestamp()
       .setFooter({text: "Screening requested by " + interaction.member.displayName, iconURL: noblox_requester_thumb[0].imageUrl});
       /// REPLY SECTION
-      interaction.reply({content: "New screening requested!", embeds: [NewScreeningEmbed], ephemeral: true});
+      interaction.channel.send({content: "New screening requested!", embeds: [NewScreeningEmbed], ephemeral: true});
     } else {
       interaction.reply("This command is only for Academy staff and the High Command. If you believe this is an error, please contact BelethLucifer.");
       return;
