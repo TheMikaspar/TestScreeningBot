@@ -12,21 +12,21 @@ module.exports = {
     .setName('clearscreening')
     .setDescription('Clear all screenings'),
 
-async execute(interaction) {
+  async execute(interaction) {
 
     const is_aivd = interaction.member.roles.cache.has(IS_AIVD);
 
-        if (is_aivd) {
+    if (is_aivd) {
 
-        trello.move_card(TRELLO_LIST_ID_SCREENING, TRELLO_BOARD_ID, TRELLO_LIST_ID_SCREENING_OLD, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
-                   interaction.reply("All screenings moved to archive.");
-            } else {
-              interaction.reply({content: "You can't use this command! This is for the High Command only!", ephemeral: true});
-              return;
-            }
-///    if (cards) {
-///            await trello.move_card(list_id, new_list_id, board_id, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
-///        } return;
+      trello.move_card(TRELLO_LIST_ID_SCREENING, TRELLO_BOARD_ID, TRELLO_LIST_ID_SCREENING_OLD, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
+      interaction.reply("All screenings moved to archive.");
+    } else {
+      interaction.reply({ content: "You can't use this command! This is for the High Command only!", ephemeral: true });
+      return;
+    }
+    ///    if (cards) {
+    ///            await trello.move_card(list_id, new_list_id, board_id, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
+    ///        } return;
 
 
   }

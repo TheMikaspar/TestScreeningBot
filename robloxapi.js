@@ -15,4 +15,4 @@ exports.get_knp_members = async (groupId, sortOrder, limit) => {
         .catch(error => util.process_error(error));
 
     return data;
-  }
+}

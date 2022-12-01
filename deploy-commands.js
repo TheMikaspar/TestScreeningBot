@@ -17,10 +17,10 @@ const rest = new REST({ version: '10' }).setToken(bot_token);
 
 /// To delete commands
 ///rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })
-	///.then(() => console.log('Successfully deleted all guild commands.'))
-	///.catch(console.error);
+///.then(() => console.log('Successfully deleted all guild commands.'))
+///.catch(console.error);
 
 /// To load new commands
 rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-	.then((data) => console.log(`Successfully registered ${data.length} application commands.`))
-     .catch(console.error);
+  .then((data) => console.log(`Successfully registered ${data.length} application commands.`))
+  .catch(console.error);

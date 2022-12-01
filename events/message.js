@@ -9,7 +9,7 @@ function check_permissions(member, command_info) {
     // If a command requires the user to be in the High Command, check if they have the
     // required High Command role.
     if (command_info.requires_hc) {
-        if (member.roles.cache.find(role => role.id == HC_ROLE_ID_POLICE) != undefined ) {
+        if (member.roles.cache.find(role => role.id == HC_ROLE_ID_POLICE) != undefined) {
             return true;
         }
     } else {

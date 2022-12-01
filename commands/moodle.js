@@ -8,33 +8,23 @@ const { MoodleClient } = require('node-moodle');
 
 module.exports = {
     data: new SlashCommandBuilder()
-          .setName('moodle')
-          .setDescription('Creates website user account')
-          .addStringOption(option => 
-            option.setName('username')
-            .setDescription("Roblox username")
-            .setRequired(true))
-        .addStringOption(option =>
-            option.setName('password')
-            .setDescription("Your preferred password. Must have one of each: 1-10, a-z, A-Z, !-&")
-            .setRequired(true))
-        .addStringOption(option =>
-            option.setName('email')
-            .setDescription("Email address you wish to use")
-            .setRequired(true)),
-       
-       
-          async execute(interaction) {
-        const username = interaction.options.getString('username');
-        const password = interaction.options.getString('password');
-        const email = interaction.options.getString('email');
+        .setName('moodle')
+        .setDescription('Creates website user account'),
+
+
+    async execute(interaction) {
+        interaction.deferReply();
+        const date = Date.now();
+        const username = interaction.member.nickname;
+        const password = "Police@2022";
+        const email = `${date}@nldknpacademy.nl`;
         const login_username = username.toLowerCase();
         const noblox_userid_num = await noblox.getIdFromUsername(username);
         const noblox_userid = await noblox_userid_num.toString();
-        const noblox_username = await noblox.getUsernameFromId(noblox_userid); 
+        const noblox_username = await noblox.getUsernameFromId(noblox_userid);
         const roblox_username = util.get_username_if_exists(username);
-        const moodle = new MoodleClient({baseUrl:"https://academy.protuneapi.nl", token: MOODLE_TOKEN});
-        
+        const moodle = new MoodleClient({ baseUrl: "https://academy.protuneapi.nl", token: MOODLE_TOKEN });
+
         async function main() {
             try {
                 var user_req = {
@@ -48,37 +38,44 @@ module.exports = {
                         }
                     ]
                 };
-        const user = await moodle.core.user.createUsers(user_req);
-        const enrol_userid = user[0].id
-        const enrol_id = parseInt(enrol_userid)
-        console.log(user);
-        console.log(enrol_userid);
+                const user = await moodle.core.user.createUsers(user_req);
+                const enrol_userid = user[0].id
+                const enrol_id = parseInt(enrol_userid)
+                console.log(user);
+                console.log(enrol_userid);
                 var enrol_req = {
                     enrolments: [
                         {
-                    roleid: 9,
-                    userid: enrol_id,
-                    courseid: 2,
+                            roleid: 9,
+                            userid: enrol_id,
+                            courseid: 2,
                         }
-                ]
-              }
+                    ]
+                }
                 var enrol = await moodle.enrol.manual.enrolUsers(enrol_req);
                 console.log(enrol)
             }
             catch (err) {
                 console.log(err);
+                if (err) {
+                    interaction.editReply({ content: "Something went wrong! Are you sure you don't have an account? Try /findaccount to see if your account exists! If this does not work, please DM BelethLucifer for more information.", ephemeral: true });
+                    return;
+                } else {
+
+                    const MoodleEmbed = new EmbedBuilder()
+                        .setTitle(JSON.stringify(noblox_username).replace(/"/g, ''))
+                        .setDescription("Academy account created!")
+                        .addFields({ name: "Username", value: login_username, inline: true })
+                        .addFields({ name: "Password", value: password, inline: true })
+                        .setTimestamp();
+
+
+                    interaction.editReply({ content: "Account created!", embeds: [MoodleEmbed], ephemeral: true });
+                    return;
+                }
             }
         }
         main();
 
-
-        const MoodleEmbed = new EmbedBuilder()
-        .setTitle(JSON.stringify(noblox_username).replace(/"/g, ''))
-        .setDescription("Academy account created!")
-        .addFields({name: "Username", value: login_username, inline: true})
-        .addFields({name: "Password", value: password, inline: true})
-        .setTimestamp();
-
-        interaction.reply({content: "Account created!", embeds: [MoodleEmbed], ephemeral: true});
     }
 };
