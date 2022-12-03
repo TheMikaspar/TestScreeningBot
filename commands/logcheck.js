@@ -1,10 +1,10 @@
 // Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
-// Last update: 28/10/2022 Command works fine, ready for deployment!
+// Last update: 03/12/2022 Fixed formatting and removed unused code.
 
 /// Pre-command requirements
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const noblox = require('noblox.js')
-const { GuildId, clientId, is_police_id, knp_group, IS_AIVD, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
+const { knp_group, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 const trello = require('../trello.js')
 
 ///Command creator section

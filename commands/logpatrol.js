@@ -1,11 +1,11 @@
 // Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
-// Last update: 28/10/2022 Command works fine, ready for deployment!
+// Last update: 03/12/2022 Fixed formatting and removed unused code. Removed username, now auto selects from nickname. Forced Ephemeral for all messages.
 
 /// Pre-command requirements
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const noblox = require('noblox.js');
 const trello = require('../trello.js');
-const { GuildId, clientId, is_police_id, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
+const { is_police_id, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 const util = require('../util.js');
 
 
@@ -13,11 +13,7 @@ const util = require('../util.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('logpatrol')
-        .setDescription('Logs your patrol')
-        .addStringOption(option =>
-            option.setName('username')
-                .setDescription('ROBLOX username')
-                .setRequired(true))
+        .setDescription('Log your patrol')
         .addNumberOption(option =>
             option.setName('hours')
                 .setDescription('Hours patrolled')
@@ -28,7 +24,7 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction) {
-        const username = await interaction.options.getString('username');
+        const username = await interaction.member.nickname;
         const roblox_username = await util.get_username_if_exists(username);
 
         // The user does not exist.
@@ -144,7 +140,7 @@ module.exports = {
             }
             console.log(username + " patrolled for " + hours_patrolled_str + " hours and " + minutes_patrolled_str + " minutes. ");
         } else {
-            interaction.reply("This user doesn't exist! Make sure you spelled the name correctly!");
+            interaction.reply({ content: "This user doesn't exist! Make sure you spelled the name correctly!", ephemeral: true });
         }
     }
 };

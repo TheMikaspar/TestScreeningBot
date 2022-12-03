@@ -1,11 +1,11 @@
 // Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
-// Last update: 28/10/2022 Command works fine, ready for deployment.
+// Last update: 03/12/2022 Fixed formatting and removed unused code.
 
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType, } = require('discord.js');
-const noblox = require('noblox.js');
+const { SlashCommandBuilder } = require('discord.js');
+
 const trello = require('../trello.js');
-const { GuildId, clientId, is_police_id, HC_ROLE_ID_POLICE, TRELLO_BOARD_ID, TRELLO_LIST_ID_OLD, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN, board_id, new_list_id, list_id } = require('../config.json');
-const util = require('../util.js');
+const { HC_ROLE_ID_POLICE, TRELLO_BOARD_ID, TRELLO_LIST_ID_OLD, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
+
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -17,7 +17,6 @@ module.exports = {
 
     const cards = await trello.get_cards(list_id, TRELLO_USER_KEY, TRELLO_USER_TOKEN);
 
-    const is_police = interaction.member.roles.cache.has(is_police_id);
     let police_hc = await interaction.member.roles.cache.has(HC_ROLE_ID_POLICE);
     let response = null;
     let date_ob = new Date();

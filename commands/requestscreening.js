@@ -1,10 +1,10 @@
 // Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
-// Last update: 28/10/2022 Command works fine, could use something to catch rate limit errors.
+// Last update: 03/12/2022 Fixed formatting and removed unused code.
 
 /// Pre-command requirements
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const noblox = require('noblox.js');
-const { GuildId, clientId, is_police_id, academy_id, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
+const { is_police_id, academy_id, TRELLO_LIST_ID_SCREENING, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 const trello = require('../trello.js');
 const util = require('../util.js');
 

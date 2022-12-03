@@ -1,10 +1,9 @@
 // Credits BelethLucifer(Mika#5285), Valatos and TheStrikes.
-// Last update: 28/10/2022 Command works fine, CHANGE THE USER ID FOR OFFICIAL DEPLOYMENT
+// Last update: 03/12/2022 Fixed formatting and removed unused code.
 
 /// Pre-command requirements
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
-const noblox = require('noblox.js')
-const { GuildId, clientId, is_police_id, IS_AIVD, TRELLO_LIST_ID_SCREENING, HC_ROLE_ID_POLICE, TRELLO_LIST_ID_POLICE, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
+const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const { IS_AIVD, TRELLO_LIST_ID_SCREENING, TRELLO_USER_KEY, TRELLO_USER_TOKEN } = require('../config.json');
 const trello = require('../trello.js')
 
 ///Command creator section
@@ -31,15 +30,12 @@ module.exports = {
         const data = card.desc;
         const data_parsed = JSON.parse(data);
         const username = await data_parsed.username;
-        const noblox_userid_num = data_parsed.noblox_userid_num;
         const noblox_userid = data_parsed.noblox_userid;
         const noblox_username = data_parsed.noblox_username;
         const noblox_thumbnail = data_parsed.noblox_thumbnail;
         const noblox_info = data_parsed.noblox_info;
         const noblox_nld = data_parsed.noblox_nld;
         const noblox_ant = data_parsed.noblox_ant;
-        const noblox_requester_idn = data_parsed.noblox_requester_idn;
-        const noblox_requester_id = data_parsed.noblox_requester_id;
         const noblox_requester_thumb = data_parsed.noblox_requester_thumb;
 
         /// Button create section
@@ -112,14 +108,14 @@ module.exports = {
         const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button })
 
         collector.on('collect', i => {
-          if (i.customId === 'success' && i.user.id === '243030109492215809') {
+          if (i.customId === 'success') {
             i.update({ content: 'Screening accepted!', embeds: [PassedScreeningEmbed], components: [] });
             const m = interaction.guild.members.cache.find(member => member.nickname == username);
             if (m) {
               interaction.client.users.fetch(m).then(m => m.send("Congratulations! You passed your screening and may now start requesting trainings. Good luck!").catch(() => { }))
             };
             return;
-          } if (i.customId === 'danger' && i.user.id === '243030109492215809') {
+          } if (i.customId === 'danger') {
             const m = interaction.guild.members.cache.find(member => member.nickname == username);
             if (m) {
               interaction.client.users.fetch(m).then(m => m.send("Dear " + noblox_username + ", You have failed your screening. Please contact BelethLucifer for more information.").catch(() => { }))
