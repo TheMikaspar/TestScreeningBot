@@ -24,8 +24,18 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction) {
-        const username = await interaction.member.nickname;
+
+        const duser = await interaction.member.user.username;
+        const rusername = await interaction.member.nickname;
+
+        if (rusername !== null) {
+            var username = rusername;
+        } else {
+            var username = duser;
+        }
+
         const roblox_username = await util.get_username_if_exists(username);
+    
 
         // The user does not exist.
         if (roblox_username) {
